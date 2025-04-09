@@ -1,1 +1,428 @@
-node_modules
+<!DOCTYPE html><html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BiomX Shop - Статус Telegram-бота</title>
+  <style>
+    :root {
+      --primary-color: #f71a2c;
+      --primary-light: #ff4552;
+      --background: #f9f9f9;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --border-color: #e0e0e0;
+      --success-color: #4caf50;
+      --warning-color: #ff9800;
+      --error-color: #f44336;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--text-color);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header h1 {
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+
+    .status-card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .status-active {
+      background-color: var(--success-color);
+    }
+
+    .status-warning {
+      background-color: var(--warning-color);
+    }
+
+    .status-error {
+      background-color: var(--error-color);
+    }
+
+    .status-text {
+      font-weight: bold;
+    }
+
+    .status-details {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .info-card h3 {
+      margin-top: 0;
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .info-label {
+      font-weight: bold;
+      color: #666;
+    }
+
+    .info-value {
+      text-align: right;
+    }
+
+    .test-section {
+      margin-top: 30px;
+    }
+
+    .test-card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .test-form {
+      display: flex;
+      margin-bottom: 10px;
+    }
+
+    .test-form input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px 0 0 4px;
+      font-size: 14px;
+    }
+
+    .test-form button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 0 4px 4px 0;
+      padding: 8px 15px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .test-form button:hover {
+      background-color: var(--primary-light);
+    }
+
+    .test-response {
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      padding: 10px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .refresh-btn {
+      display: block;
+      width: 100%;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .refresh-btn:hover {
+      background-color: var(--primary-light);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>BiomX Shop - Telegram-бот</h1>
+      <p>Страница статуса и мониторинга</p>
+    </div>
+
+    <div class="status-card">
+      <div class="status-indicator">
+        <div class="status-dot status-active" id="status-dot"></div>
+        <div class="status-text" id="status-text">Проверка статуса...</div>
+      </div>
+      <div class="status-details" id="status-details">Получение информации о состоянии Telegram-бота...</div>
+      <button class="refresh-btn" onclick="checkStatus()">Обновить статус</button>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Информация о боте</h3>
+        <div class="info-item">
+          <div class="info-label">Имя:</div>
+          <div class="info-value" id="bot-name">Загрузка...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Username:</div>
+          <div class="info-value" id="bot-username">Загрузка...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ID:</div>
+          <div class="info-value" id="bot-id">Загрузка...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Время работы:</div>
+          <div class="info-value" id="uptime">Загрузка...</div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h3>Конфигурация</h3>
+        <div class="info-item">
+          <div class="info-label">URL сайта:</div>
+          <div class="info-value" id="site-url">Загрузка...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Telegram Web App:</div>
+          <div class="info-value" id="tg-app-url">Загрузка...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Режим работы:</div>
+          <div class="info-value" id="bot-mode">Загрузка...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <div class="test-card">
+        <h3>Тест команды</h3>
+        <div class="test-form">
+          <input type="text" id="chat-id" placeholder="Chat ID (например, 123456789)">
+          <button onclick="testCommand()">Отправить /test</button>
+        </div>
+        <div class="test-response" id="test-command-response">Результат будет отображен здесь</div>
+      </div>
+
+      <div class="test-card">
+        <h3>Просмотр логов</h3>
+        <div class="test-form">
+          <input type="number" id="log-lines" placeholder="Количество строк (по умолчанию 10)" value="10">
+          <button onclick="fetchLogs()">Загрузить логи</button>
+        </div>
+        <div class="test-response" id="logs-response">Результат будет отображен здесь</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>© 2024 BiomX Shop - Telegram-бот для Free Fire</p>
+    </div>
+  </div>
+
+  <script>
+    // Функция для форматирования времени
+    function formatTime(seconds) {
+      const days = Math.floor(seconds / 86400);
+      seconds %= 86400;
+      const hours = Math.floor(seconds / 3600);
+      seconds %= 3600;
+      const minutes = Math.floor(seconds / 60);
+      seconds = Math.floor(seconds % 60);
+      
+      let result = '';
+      if (days > 0) result += `${days}д `;
+      if (hours > 0 || days > 0) result += `${hours}ч `;
+      if (minutes > 0 || hours > 0 || days > 0) result += `${minutes}м `;
+      result += `${seconds}с`;
+      
+      return result;
+    }
+
+    // Проверка статуса бота
+    async function checkStatus() {
+      try {
+        const response = await fetch('/api/telegram/status');
+        if (!response.ok) {
+          throw new Error(`Ошибка HTTP: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Обновляем индикатор статуса
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+        const statusDetails = document.getElementById('status-details');
+        
+        if (data.status === 'active') {
+          statusDot.className = 'status-dot status-active';
+          statusText.textContent = 'Активен';
+          statusDetails.textContent = 'Telegram-бот работает нормально и готов обрабатывать команды.';
+        } else {
+          statusDot.className = 'status-dot status-error';
+          statusText.textContent = 'Ошибка';
+          statusDetails.textContent = data.error || 'Произошла неизвестная ошибка при проверке статуса бота.';
+        }
+        
+        // Заполняем информацию о боте
+        if (data.bot) {
+          document.getElementById('bot-name').textContent = data.bot.first_name || 'Н/Д';
+          document.getElementById('bot-username').textContent = '@' + (data.bot.username || 'Н/Д');
+          document.getElementById('bot-id').textContent = data.bot.id || 'Н/Д';
+        }
+        
+        // Заполняем конфигурацию
+        if (data.configuration) {
+          document.getElementById('site-url').textContent = data.configuration.site_url || 'Н/Д';
+          document.getElementById('tg-app-url').textContent = data.configuration.tg_app_url || 'Н/Д';
+          
+          let modeText = '';
+          if (data.configuration.polling_mode) {
+            modeText = 'Polling (активный режим)';
+          } else if (data.configuration.webhook_mode) {
+            modeText = 'Webhook (пассивный режим)';
+          } else {
+            modeText = 'Неизвестно';
+          }
+          document.getElementById('bot-mode').textContent = modeText;
+        }
+        
+        // Обновляем время работы
+        if (data.uptime) {
+          document.getElementById('uptime').textContent = formatTime(data.uptime);
+        }
+      } catch (error) {
+        console.error('Ошибка при получении статуса:', error);
+        
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+        const statusDetails = document.getElementById('status-details');
+        
+        statusDot.className = 'status-dot status-error';
+        statusText.textContent = 'Ошибка соединения';
+        statusDetails.textContent = `Не удалось получить информацию о статусе: ${error.message}`;
+      }
+    }
+
+    // Тестирование команды
+    async function testCommand() {
+      const chatId = document.getElementById('chat-id').value.trim();
+      const responseElement = document.getElementById('test-command-response');
+      
+      if (!chatId) {
+        responseElement.textContent = 'Ошибка: Введите Chat ID для тестирования';
+        return;
+      }
+      
+      responseElement.textContent = 'Отправка команды...';
+      
+      try {
+        const response = await fetch('/api/telegram/test-command', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            chatId,
+            command: '/test',
+            verbose: true
+          })
+        });
+        
+        const data = await response.json();
+        responseElement.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        console.error('Ошибка при отправке тестовой команды:', error);
+        responseElement.textContent = `Ошибка: ${error.message}`;
+      }
+    }
+
+    // Загрузка логов (заглушка)
+    function fetchLogs() {
+      const lines = parseInt(document.getElementById('log-lines').value) || 10;
+      const responseElement = document.getElementById('logs-response');
+      
+      responseElement.textContent = `Загрузка последних ${lines} строк логов...`;
+      
+      // Эта функция просто показывает имитацию логов, так как настоящие логи требуют доступа к серверу
+      setTimeout(() => {
+        const currentTime = new Date().toISOString();
+        let logs = `${currentTime} - [INFO] Загрузка логов (это тестовый лог)\n`;
+        
+        for (let i = 1; i < lines; i++) {
+          const minutes = i;
+          const pastTime = new Date(Date.now() - minutes * 60000).toISOString();
+          logs += `${pastTime} - [INFO] Telegram бот активен, обработано команд: ${Math.floor(Math.random() * 100)}\n`;
+        }
+        
+        responseElement.textContent = logs;
+      }, 500);
+    }
+
+    // Загружаем статус при загрузке страницы
+    document.addEventListener('DOMContentLoaded', checkStatus);
+  </script>
+</body>
+</html>
